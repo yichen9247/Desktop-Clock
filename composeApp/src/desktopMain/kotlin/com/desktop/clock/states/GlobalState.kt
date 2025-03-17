@@ -18,7 +18,7 @@ object GlobalState {
     val settingDialogState = mutableStateOf(false)
 
     suspend fun toggleTransparent() {
-        isFullScreen.value = false
+        if (!isTransparent.value && isFullScreen.value) return
         if (isTransparent.value) {
             isTransparent.value = false
         } else {
