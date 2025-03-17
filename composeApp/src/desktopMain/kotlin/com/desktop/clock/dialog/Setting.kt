@@ -3,10 +3,9 @@ package com.desktop.clock.dialog
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Switch
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -37,7 +36,7 @@ fun SettingDialog() {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(20.dp)
+                        .padding(25.dp)
                 ) {
                     Text(
                         text = "设置 - 桌面时钟",
@@ -52,6 +51,30 @@ fun SettingDialog() {
                         item { DialogContent() }
                     }
                 }
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .absoluteOffset(x = 0.dp, y = 0.dp),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(bottom = 25.dp)
+                            .fillMaxWidth(0.55f),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        SnackbarHost(
+                            hostState = GlobalState.snackbarHostState.value
+                        )
+                    }
+                }
+            }
+        }
+
+        DisposableEffect(Unit) {
+            onDispose {
+                println(1)
+                GlobalState.snackbarHostState.value.currentSnackbarData?.dismiss()
             }
         }
     }
@@ -78,7 +101,19 @@ private fun DialogContent() {
             Switch(
                 checked = GlobalState.isFullScreen.value,
                 onCheckedChange = {
-                    GlobalState.toggleFullScreen()
+                    GlobalScope.launch {
+                        if (GlobalState.isTransparent.value) {
+                            GlobalState.snackbarHostState.value.currentSnackbarData?.dismiss()
+                            if (GlobalState.snackbarHostState.value.showSnackbar(
+                                    actionLabel = "关闭透明",
+                                    message = "请先关闭窗口透明",
+                                ) == SnackbarResult.ActionPerformed) {
+                                GlobalState.toggleTransparent()
+                            }
+                            return@launch
+                        }
+                        GlobalState.toggleFullScreen()
+                    }
                 }
             )
         }
@@ -90,6 +125,16 @@ private fun DialogContent() {
                 checked = GlobalState.isTransparent.value,
                 onCheckedChange = {
                     GlobalScope.launch {
+                        if (GlobalState.isFullScreen.value && !GlobalState.isTransparent.value) {
+                            GlobalState.snackbarHostState.value.currentSnackbarData?.dismiss()
+                            if (GlobalState.snackbarHostState.value.showSnackbar(
+                                actionLabel = "关闭全屏",
+                                message = "请先关闭窗口全屏",
+                            ) == SnackbarResult.ActionPerformed) {
+                                GlobalState.closeFullScreen()
+                            }
+                            return@launch
+                        }
                         GlobalState.toggleTransparent()
                     }
                 }
