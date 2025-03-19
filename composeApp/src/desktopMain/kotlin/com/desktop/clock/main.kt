@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
+import coil3.compose.AsyncImage
 import com.desktop.clock.pages.HomePage
 import com.desktop.clock.states.GlobalState
 import com.desktop.clock.system.HandUtils

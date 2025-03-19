@@ -12,10 +12,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
+import com.desktop.clock.config.SystemConfig
 import com.desktop.clock.dialog.SettingDialog
 import com.desktop.clock.states.GlobalState
 import com.desktop.clock.system.HandUtils
@@ -35,6 +39,9 @@ fun HomePage() {
         modifier = homeModifier,
         contentAlignment = Alignment.Center
     ) {
+
+        if (GlobalState.isImageBackground.value) ImageBackground()
+
         SettingDialog()
         CenterTimeBox()
         FloatingButton()
@@ -48,48 +55,42 @@ private fun CenterTimeBox() {
     val date = Date(currentTime)
     var isOnTheHour by remember { mutableStateOf(false) }
 
+    var textStyle = TextStyle(
+        brush = Brush.linearGradient(
+            start = Offset.Zero,
+            end = Offset.Infinite,
+            colors = if (GlobalState.isGradualText.value) {
+                listOf(Color(255, 94, 158), Color(255, 185, 96))
+            } else listOf(Color(255, 255, 255), Color(255, 255, 255))
+        )
+    )
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            fontSize = if (GlobalState.showDateClock.value) 120.sp else 180.sp,
+            style = textStyle,
             color = Color.White,
             letterSpacing = 14.sp,
-            fontWeight = FontWeight.Bold,
-            style = TextStyle(
-                brush = Brush.linearGradient(
-                    start = Offset.Zero,
-                    end = Offset.Infinite,
-                    colors = if (GlobalState.isGradualText.value) {
-                        listOf(Color(255, 94, 158), Color(255, 185, 96))
-                    } else listOf(Color(255, 255, 255), Color(255, 255, 255))
-                )
-            ),
             text = remember(date) {
                 SimpleDateFormat("HH:mm:ss").format(date)
-            }
+            },
+            fontWeight = FontWeight.Bold,
+            fontSize = if (GlobalState.showDateClock.value) 120.sp else 180.sp
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         if (GlobalState.showDateClock.value) Text(
             fontSize = 42.sp,
+            style = textStyle,
             color = Color.White,
             letterSpacing = 6.sp,
-            fontWeight = FontWeight.Bold,
-            style = TextStyle(
-                brush = Brush.linearGradient(
-                    start = Offset.Zero,
-                    end = Offset.Infinite,
-                    colors = if (GlobalState.isGradualText.value) {
-                        listOf(Color(66, 211, 146), Color(95, 212, 255))
-                    } else listOf(Color(255, 255, 255), Color(255, 255, 255))
-                )
-            ),
             text = remember(date) {
                 val format = SimpleDateFormat("M月d日 EEEE", Locale.CHINA)
                 format.format(date)
-            }
+            },
+            fontWeight = FontWeight.Bold
         )
     }
 
@@ -134,4 +135,16 @@ private fun FloatingButton() {
             )
         }
     }
+}
+
+@Composable
+private fun ImageBackground() {
+    AsyncImage(
+        model = SystemConfig.ImageUrl,
+        modifier = Modifier
+            .fillMaxSize()
+            .absoluteOffset(0.dp, y = 0.dp),
+        contentDescription = null,
+        contentScale = ContentScale.Crop
+    )
 }

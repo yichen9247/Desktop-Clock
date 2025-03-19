@@ -17,9 +17,10 @@ object GlobalState {
 
     val isFullScreen = mutableStateOf(false)
     val showDateClock = mutableStateOf(true)
-    val isGradualText = mutableStateOf(true)
+    val isGradualText = mutableStateOf(false)
     val isTransparent = mutableStateOf(false)
     val isTellTheTime = mutableStateOf(false)
+    val isImageBackground = mutableStateOf(false)
     val settingDialogState = mutableStateOf(false)
 
     suspend fun toggleTransparent() {
@@ -32,6 +33,7 @@ object GlobalState {
             isFullScreen.value = true
             isTransparent.value = true
         }
+        isImageBackground.value = false
         settingDialogState.value = false
     }
 

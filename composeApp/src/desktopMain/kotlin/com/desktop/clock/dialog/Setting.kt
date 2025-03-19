@@ -73,7 +73,6 @@ fun SettingDialog() {
 
         DisposableEffect(Unit) {
             onDispose {
-                println(1)
                 GlobalState.snackbarHostState.value.currentSnackbarData?.dismiss()
             }
         }
@@ -101,19 +100,11 @@ private fun DialogContent() {
             Switch(
                 checked = GlobalState.isFullScreen.value,
                 onCheckedChange = {
-                    GlobalScope.launch {
-                        if (GlobalState.isTransparent.value) {
-                            GlobalState.snackbarHostState.value.currentSnackbarData?.dismiss()
-                            if (GlobalState.snackbarHostState.value.showSnackbar(
-                                    actionLabel = "关闭透明",
-                                    message = "请先关闭窗口透明",
-                                ) == SnackbarResult.ActionPerformed) {
-                                GlobalState.toggleTransparent()
-                            }
-                            return@launch
-                        }
-                        GlobalState.toggleFullScreen()
+                    if (GlobalState.isTransparent.value) {
+                        toggleTransparent()
+                        return@Switch
                     }
+                    GlobalState.toggleFullScreen()
                 }
             )
         }
@@ -124,19 +115,29 @@ private fun DialogContent() {
             Switch(
                 checked = GlobalState.isTransparent.value,
                 onCheckedChange = {
+                    if (GlobalState.isFullScreen.value && !GlobalState.isTransparent.value) {
+                        closeFullScreen()
+                        return@Switch
+                    }
                     GlobalScope.launch {
-                        if (GlobalState.isFullScreen.value && !GlobalState.isTransparent.value) {
-                            GlobalState.snackbarHostState.value.currentSnackbarData?.dismiss()
-                            if (GlobalState.snackbarHostState.value.showSnackbar(
-                                actionLabel = "关闭全屏",
-                                message = "请先关闭窗口全屏",
-                            ) == SnackbarResult.ActionPerformed) {
-                                GlobalState.closeFullScreen()
-                            }
-                            return@launch
-                        }
                         GlobalState.toggleTransparent()
                     }
+                }
+            )
+        }
+
+        DialogItem(
+            name = "图片背景"
+        ) {
+            Switch(
+                checked = GlobalState.isImageBackground.value,
+                onCheckedChange = {
+                    if (GlobalState.isTransparent.value) {
+                        toggleTransparent()
+                        return@Switch
+                    }
+                    GlobalState.isImageBackground.value = !GlobalState.isImageBackground.value
+                    if (GlobalState.isImageBackground.value && GlobalState.isGradualText.value) closeGradualText()
                 }
             )
         }
@@ -182,5 +183,43 @@ private fun DialogItem(
         )
         Spacer(modifier = Modifier.width(15.dp))
         content()
+    }
+}
+
+@OptIn(DelicateCoroutinesApi::class)
+private fun toggleTransparent() {
+    GlobalScope.launch {
+        GlobalState.snackbarHostState.value.currentSnackbarData?.dismiss()
+        if (GlobalState.snackbarHostState.value.showSnackbar(
+                actionLabel = "关闭透明",
+                message = "请先关闭窗口透明",
+            ) == SnackbarResult.ActionPerformed) {
+            GlobalState.toggleTransparent()
+        }
+    }
+}
+
+@OptIn(DelicateCoroutinesApi::class)
+private fun closeFullScreen() {
+    GlobalScope.launch {
+        GlobalState.snackbarHostState.value.currentSnackbarData?.dismiss()
+        if (GlobalState.snackbarHostState.value.showSnackbar(
+                actionLabel = "关闭全屏",
+                message = "请先关闭窗口全屏",
+            ) == SnackbarResult.ActionPerformed) {
+            GlobalState.closeFullScreen()
+        }
+    }
+}
+
+@OptIn(DelicateCoroutinesApi::class)
+private fun closeGradualText() {
+    GlobalScope.launch {
+        if (GlobalState.snackbarHostState.value.showSnackbar(
+                actionLabel = "关闭渐变",
+                message = "建议同时关闭渐变文本",
+            ) == SnackbarResult.ActionPerformed) {
+            GlobalState.isGradualText.value = false
+        }
     }
 }
