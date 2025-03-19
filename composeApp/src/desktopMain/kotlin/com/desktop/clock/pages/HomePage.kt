@@ -13,6 +13,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -126,6 +128,7 @@ private fun FloatingButton() {
                         GlobalState.settingDialogState.value = true
                     }
                 )
+                .pointerHoverIcon(PointerIcon.Hand)
         ) {
             Icon(
                 tint = Color.White,

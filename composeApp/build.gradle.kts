@@ -30,6 +30,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.runtime.compose)
+
             implementation("io.coil-kt.coil3:coil-compose:3.1.0")
             implementation("io.coil-kt.coil3:coil-network-okhttp:3.1.0")
         }
