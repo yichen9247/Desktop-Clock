@@ -27,6 +27,7 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.foundation)
             implementation(compose.components.resources)
+            implementation(compose.materialIconsExtended)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.runtime.compose)
@@ -49,7 +50,7 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             vendor = "Yichen9247"
             packageName = "Desktop Clock"
-            packageVersion = "1.0.1"
+            packageVersion = "1.0.2"
 
             windows {
                 shortcut = true

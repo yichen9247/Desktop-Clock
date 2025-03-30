@@ -3,16 +3,15 @@ package com.desktop.clock.pages
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.ContentScale
@@ -57,7 +56,7 @@ private fun CenterTimeBox() {
     val date = Date(currentTime)
     var isOnTheHour by remember { mutableStateOf(false) }
 
-    var textStyle = TextStyle(
+    val textStyle = TextStyle(
         brush = Brush.linearGradient(
             start = Offset.Zero,
             end = Offset.Infinite,
